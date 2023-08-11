@@ -91,6 +91,7 @@ class DataPoolRegistry:
         "imdb": IMDB,
         "commongen": CommonGen,
         "totto": ToTTo,
+        "toy_pool": ToyPool,
         "cnn_daily_mail": CNNDailyMail,
         "imdb_seq2seq": IMDBForSeq2Seq,
         "narrative_qa": NarrativeQA,

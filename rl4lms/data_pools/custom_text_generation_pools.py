@@ -15,14 +15,18 @@ class ToyPool(TextGenPool):
     @classmethod
     def prepare(cls, split: str):
         path = os.path.join(Path.home(), "ASH_code", "predicting-inductive-biases-RL", "properties", "toy_1")
-        if split == 'train':
-            dataset = load_dataset("tsv",data_files=os.path.join(path,"finetune_0.5_train.tsv"))
-        if split == 'val':
-            dataset = load_dataset("tsv",data_files=os.path.join(path,"finetune_0.5_val.tsv"))
-        if split == 'test':
-            dataset = load_dataset("tsv",data_files=os.path.join(path,"test.tsv"))
+        file_dict = {
+            "train" : os.path.join(path,"finetune_0.5_train.csv"),
+            "val" : os.path.join(path,"finetune_0.5_val.csv"),
+            "test" : os.path.join(path,"test.csv")
+        }
+        dataset = load_dataset('csv',
+                               data_files=file_dict,
+                               delimiter='\t'
+                    )
         samples = []
-        for ix, item in enumerate(dataset):
+        for ix, item in enumerate(dataset[split]):
+            #print(item)
             sample = Sample(id=f"{split}_{ix}",
                             prompt_or_input_text=item["sentence"],
                             references=[cls.reward(item["label"])]

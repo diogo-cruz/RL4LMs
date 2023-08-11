@@ -11,6 +11,35 @@ from collections import defaultdict
 import zipfile
 import json
 
+class ToyPool(TextGenPool):
+    @classmethod
+    def prepare(cls, split: str):
+        path = os.path.join(Path.home(), "ASH_code", "predicting-inductive-biases-RL", "properties", "toy_1")
+        if split == 'train':
+            dataset = load_dataset(path+"finetune_0.5_train.tsv")
+        if split == 'val':
+            dataset = load_dataset(path+"finetune_0.5_val.tsv")
+        if split == 'test':
+            dataset = load_dataset(path+"test.tsv")
+        samples = []
+        for ix, item in enumerate(dataset):
+            sample = Sample(id=f"{split}_{ix}",
+                            prompt_or_input_text=item["sentence"],
+                            references=[cls.reward(item["label"])]
+                            )
+            samples.append(sample)
+        pool_instance = cls(samples)
+        return pool_instance
+
+    @staticmethod
+    def reward(label):
+        if label == '1':
+            result = '5 5 5 5 5'
+        elif label == '0':
+            result = '0 0 0 0 0'
+        else:
+            result = '2 2 2 2 2'
+        return result
 
 class ToTTo(TextGenPool):
     @classmethod

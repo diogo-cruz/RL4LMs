@@ -16,11 +16,11 @@ class ToyPool(TextGenPool):
     def prepare(cls, split: str):
         path = os.path.join(Path.home(), "ASH_code", "predicting-inductive-biases-RL", "properties", "toy_1")
         if split == 'train':
-            dataset = load_dataset(os.path.join(path,"finetune_0.5_train.tsv"))
+            dataset = load_dataset("tsv",data_files=os.path.join(path,"finetune_0.5_train.tsv"))
         if split == 'val':
-            dataset = load_dataset(os.path.join(path,"finetune_0.5_val.tsv"))
+            dataset = load_dataset("tsv",data_files=os.path.join(path,"finetune_0.5_val.tsv"))
         if split == 'test':
-            dataset = load_dataset(os.path.join(path,"test.tsv"))
+            dataset = load_dataset("tsv",data_files=os.path.join(path,"test.tsv"))
         samples = []
         for ix, item in enumerate(dataset):
             sample = Sample(id=f"{split}_{ix}",

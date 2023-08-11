@@ -17,6 +17,7 @@ from rl4lms.data_pools.custom_text_generation_pools import (
     IWSLT2017EnDe,
     NarrativeQA,
     ToTTo,
+    ToyPool,
     WMT14PreprocessedEnDe,
     WMT16NewsOnlyDatasetEnDe,
     DailyDialog,

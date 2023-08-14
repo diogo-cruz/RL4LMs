@@ -5,9 +5,7 @@ tokenizer:
   pad_token_as_eos_token: False
 
 reward_fn:
-  id: increasing_numbers
-  args:
-    min_tokens: 20
+  id: toy_reward
 
 datapool:
   id: toy_pool
@@ -38,16 +36,14 @@ alg:
       apply_model_parallel: True
       generation_kwargs:
         do_sample: True
-        min_length: 20
+        min_length: 5
         top_k: 200
-        max_new_tokens: 20  # this must align with env's max steps
+        max_new_tokens: 5  # this must align with env's max steps
 
 train_evaluation:
   eval_batch_size: 256
   n_iters: 100
-  eval_every: 10
-  save_every: 10
+  eval_every: 5
+  save_every: 100
   metrics:
-    - id: increasing_numbers
-      args:
-          min_tokens: 20
+    - id: toy_metric

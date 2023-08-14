@@ -13,12 +13,12 @@ import json
 
 class ToyPool(TextGenPool):
     @classmethod
-    def prepare(cls, split: str):
-        path = os.path.join(Path.home(), "ASH_code", "predicting-inductive-biases-RL", "properties", "toy_1")
+    def prepare(cls, split: str, toy: int = 1, rate: float = 0.5):
+        path = os.path.join(Path.home(), "ASH_code", "predicting-inductive-biases-RL", "properties", "toy_{}".format(toy))
         file_dict = {
-            "train" : os.path.join(path,"finetune_0.5_train.csv"),
-            "val" : os.path.join(path,"finetune_0.5_val.csv"),
-            "test" : os.path.join(path,"test.csv")
+            "train" : os.path.join(path,"finetune_{}_train.tsv".format(rate)),
+            "val" : os.path.join(path,"finetune_{}_val.tsv".format(rate)),
+            "test" : os.path.join(path,"test.tsv")
         }
         dataset = load_dataset('csv',
                                data_files=file_dict,
@@ -26,10 +26,14 @@ class ToyPool(TextGenPool):
                     )
         samples = []
         for ix, item in enumerate(dataset[split]):
-            #print(item)
+            # if int(item['label']) not in [0,1]:
+            #     print(item)
             sample = Sample(id=f"{split}_{ix}",
                             prompt_or_input_text=item["sentence"],
-                            references=[cls.reward(item["label"])]
+                            references=[item["label"]],
+                            meta_data={
+                                "label" : item["label"]
+                            }
                             )
             samples.append(sample)
         pool_instance = cls(samples)

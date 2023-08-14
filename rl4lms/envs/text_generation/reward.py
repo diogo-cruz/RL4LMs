@@ -657,7 +657,7 @@ class IntentAccuracy(BatchedRewardFunction):
         )["intent/accuracy"][0]
         rewards[done_ixs] += self._intent_coeff * np.array(scores)
         return rewards.tolist()
-
+    
 
 if __name__ == "__main__":
     predictions = "hello there general kenobi"

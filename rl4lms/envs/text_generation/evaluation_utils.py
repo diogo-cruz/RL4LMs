@@ -74,6 +74,7 @@ def evaluate_on_samples(
     for ix, (sample, prompt_text, generated_text, ref_texts) in enumerate(
         zip(samples, all_prompt_texts, all_generated_texts, all_ref_texts)
     ):
+        #print(prompt_text," | ", generated_text," | ", ref_texts)
         sample_prediction = {
             "split_name": split_name,
             "sample_id": sample.id,
@@ -81,7 +82,7 @@ def evaluate_on_samples(
             "generated_text": generated_text,
             "ref_text": "".join(
                 [
-                    f"<START-{ref_ix+1}>" + ref_text + f"<END-{ref_ix+1}>"
+                    f"<START-{ref_ix+1}>" + str(ref_text) + f"<END-{ref_ix+1}>"
                     for ref_ix, ref_text in enumerate(ref_texts)
                 ]
             ),

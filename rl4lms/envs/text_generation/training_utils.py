@@ -214,7 +214,7 @@ class OnPolicyTrainer(TrainerWarmStartMixin):
                 self._evaluate_on_datapools(epoch=epoch, splits=["val"])
 
         # finally evaluate on val and test samples
-        self._evaluate_on_datapools(epoch=epoch)
+        self._evaluate_on_datapools(epoch=self._n_iters)
 
         # save model here - we save only the language model
         if self._tracker is not None:

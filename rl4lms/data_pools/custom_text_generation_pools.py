@@ -29,7 +29,7 @@ class ToyPool(TextGenPool):
             # if int(item['label']) not in [0,1]:
             #     print(item)
             sample = Sample(id=f"{split}_{ix}",
-                            prompt_or_input_text=item["sentence"],
+                            prompt_or_input_text=str(item["sentence"]),
                             references=[item["label"]],
                             meta_data={
                                 "label" : item["label"]
@@ -39,15 +39,6 @@ class ToyPool(TextGenPool):
         pool_instance = cls(samples)
         return pool_instance
 
-    @staticmethod
-    def reward(label):
-        if label == '1':
-            result = '5 5 5 5 5'
-        elif label == '0':
-            result = '0 0 0 0 0'
-        else:
-            result = '2 2 2 2 2'
-        return result
 
 class ToTTo(TextGenPool):
     @classmethod

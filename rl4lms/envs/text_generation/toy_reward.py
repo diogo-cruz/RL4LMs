@@ -22,15 +22,29 @@ class LoveringToyTaskRewardFunction(RewardFunction):
                 label: int
                 ):
         gen_tokens = gen_text.split()
-        number_tokens = [float(token)
-                         for token in gen_tokens if LoveringToyTaskRewardFunction.is_number(token)]
-        if len(number_tokens) > 0:
+        number_tokens = np.array([int(token)
+                         for token in gen_tokens if LoveringToyTaskRewardFunction.is_number(token)])
+        n_tokens = number_tokens.size
+        if n_tokens > 0:
             if label==0:
-                reward_value = -sum([abs(i) for i in number_tokens])
+                reward_value = ((9 - np.mean(number_tokens))/9.)*(n_tokens/5.)
+            elif label==1:
+                reward_value = (np.mean(number_tokens)/9.)*(n_tokens/5.)
             else:
-                reward_value = -sum([abs(i-1) for i in number_tokens])
+                reward_value = 0.
             return reward_value
-        return -100
+        return 0.
+        # number_tokens = [int(token)
+        #                  for token in gen_tokens if LoveringToyTaskRewardFunction.is_number(token)]
+        # if len(number_tokens) > 0:
+        #     if label==0:
+        #         reward_value = number_tokens.count(0) / len(number_tokens)
+        #     elif label==1:
+        #         reward_value = number_tokens.count(1) / len(number_tokens)
+        #     else:
+        #         reward_value = 0
+        #     return reward_value
+        # return 0
 
     def __call__(self, prev_observation: Observation,
                  action: int,

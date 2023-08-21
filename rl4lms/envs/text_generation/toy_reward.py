@@ -21,6 +21,11 @@ class LoveringToyTaskRewardFunction(RewardFunction):
     def reward(gen_text: str,
                 label: int
                 ):
+        '''
+        Reward function for LoveringToyTask, 
+         gen_text: generated text
+         label: 0 or 1 depending on whether the target feature is present
+        '''
         gen_tokens = gen_text.split()
         number_tokens = np.array([int(token)
                          for token in gen_tokens if LoveringToyTaskRewardFunction.is_number(token)])
@@ -34,17 +39,6 @@ class LoveringToyTaskRewardFunction(RewardFunction):
                 reward_value = 0.
             return reward_value
         return 0.
-        # number_tokens = [int(token)
-        #                  for token in gen_tokens if LoveringToyTaskRewardFunction.is_number(token)]
-        # if len(number_tokens) > 0:
-        #     if label==0:
-        #         reward_value = number_tokens.count(0) / len(number_tokens)
-        #     elif label==1:
-        #         reward_value = number_tokens.count(1) / len(number_tokens)
-        #     else:
-        #         reward_value = 0
-        #     return reward_value
-        # return 0
 
     def __call__(self, prev_observation: Observation,
                  action: int,
@@ -58,28 +52,63 @@ class LoveringToyTaskRewardFunction(RewardFunction):
             return reward
         return 0
 
-    # def __call__(self, prev_observation: Observation,
-    #             action: str,
-    #             current_observation: Observation = None,
-    #             done: bool = True,
-    #             meta_info: Dict[str, Any] = None) -> float:
-    #     print("Prev:", prev_observation)
-    #     print("Action:", action)
-    #     print("Curr:", current_observation)
-    #     print("Done:", done)
-    #     print("Meta:", meta_info)
-    #     print("----------------------------------------------------------------")
-    #     if done:
-    #         reward = -sum([abs(self.try_int(i)) for i in action])
-    #     else:
-    #         reward = -sum([abs(self.try_int(i)-1) for i in action])
-    #     return reward
 
+class AscendingDescendingReward(RewardFunction):
     
-    # # Helper function to convert a string to integer or return 0 if invalid
-    # @staticmethod
-    # def try_int(s):
-    #     try:
-    #         return int(s)
-    #     except ValueError:
-    #         return 0
+    def __init__(self) -> None:
+        super().__init__()
+
+    @staticmethod
+    def is_number(text):
+        try:
+            int(text)
+            return True
+        except ValueError:
+            return False
+
+    @staticmethod
+    def compare(token, prev_token, label):
+        if label:
+            return token > prev_token
+        else:
+            return token < prev_token
+
+    @staticmethod
+    def reward(
+        gen_text: str,
+        label: int
+    ) -> float:
+        '''
+        if label --> ascending else descending 
+        '''
+        gen_tokens = gen_text.split()
+        min_tokens=5    # TODO extract this from the dataset 
+        number_tokens = [float(token)
+                         for token in gen_tokens if AscendingDescendingReward.is_number(token)]
+        if len(number_tokens) > 0:
+            # then we check how many numbers are in the sorted order
+            sorted_count = 1
+            previous_token = number_tokens[0]
+            for token in number_tokens[1:]:
+                comparison = AscendingDescendingReward.compare(token, previous_token, label)
+                if comparison: 
+                    sorted_count += 1
+                    previous_token = token
+                else:
+                    break
+            return ((sorted_count)/max(len(gen_tokens), (min_tokens)))
+        return 0
+
+
+    def __call__(self, prev_observation: Observation,
+                    action: int,
+                    current_observation: Observation,
+                    done: bool,
+                    meta_info: Dict[str, Any] = None
+                ) -> float: 
+        if done:
+            gen_text = current_observation.context_text
+            reward = AscendingDescendingReward.reward(
+                gen_text, meta_info['label'])
+            return reward
+        return 0 

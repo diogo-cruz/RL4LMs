@@ -87,17 +87,17 @@ class AscendingDescendingReward(RewardFunction):
                          for token in gen_tokens if AscendingDescendingReward.is_number(token)]
         if len(number_tokens) > 0:
             # then we check how many numbers are in the sorted order
-            sorted_count = 1
+            sorted_count = 0
             previous_token = number_tokens[0]
             for token in number_tokens[1:]:
                 comparison = AscendingDescendingReward.compare(token, previous_token, label)
                 if comparison: 
                     sorted_count += 1
-                    previous_token = token
-                else:
-                    break
-            return ((sorted_count)/max(len(gen_tokens), (min_tokens)))
-        return 0
+                previous_token = token
+                #else:
+                #    break
+            return sorted_count / (min_tokens - 1)
+        return 0.
 
 
     def __call__(self, prev_observation: Observation,

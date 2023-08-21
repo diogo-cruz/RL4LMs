@@ -13,7 +13,7 @@ import json
 
 class ToyPool(TextGenPool):
     @classmethod
-    def prepare(cls, split: str, toy: int = 1, rate: float = 0.5):
+    def prepare(cls, split: str, toy: int = 1, rate: str = "0.5"):
         path = os.path.join(Path.home(), "ASH_code", "predicting-inductive-biases-RL", "properties", "toy_{}".format(toy))
         file_dict = {
             "train" : os.path.join(path,"finetune_{}_train.tsv".format(rate)),

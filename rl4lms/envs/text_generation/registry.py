@@ -46,7 +46,10 @@ from rl4lms.envs.text_generation.metric import (
     chrFmetric,
     IntentAccuracyDailyDialog,
 )
-from rl4lms.envs.text_generation.toy_metric import AscendingDescendingRewardMetric
+from rl4lms.envs.text_generation.toy_metric import (
+    AscendingDescendingRewardMetric,
+    LoveringToyTaskRewardMetric,
+)
 from rl4lms.envs.text_generation.policy.base_policy import LMActorCriticPolicy
 from rl4lms.envs.text_generation.policy.causal_policy import (
     CausalLMActorCriticPolicy,
@@ -77,7 +80,10 @@ from rl4lms.envs.text_generation.reward import (
     chrF,
     IntentAccuracy,
 )
-from rl4lms.envs.text_generation.toy_reward import AscendingDescendingReward
+from rl4lms.envs.text_generation.toy_reward import (
+    AscendingDescendingReward,
+    LoveringToyTaskRewardFunction,
+)
 from rl4lms.envs.text_generation.preference_reward import CommonGenPrefRM
 from rl4lms.envs.text_generation.test_datapool import TestTextGenPool
 from rl4lms.envs.text_generation.test_metric import DateInText, IncreasingNumbersinText
@@ -137,7 +143,8 @@ class RewardFunctionRegistry:
         "chrf": chrF,
         "intent_accuracy": IntentAccuracy,
         "common_gen_preference_model": CommonGenPrefRM,
-        "toy_reward": AscendingDescendingReward
+        "toy_reward": AscendingDescendingReward,
+        "lov_reward": LoveringToyTaskRewardFunction
     }
 
     @classmethod
@@ -174,7 +181,8 @@ class MetricRegistry:
         "ter": TERMetric,
         "chrf": chrFmetric,
         "intent_accuracy": IntentAccuracyDailyDialog,
-        "toy_metric": AscendingDescendingRewardMetric
+        "toy_metric": AscendingDescendingRewardMetric,
+        "lov_metric": LoveringToyTaskRewardMetric
     }
 
     @classmethod

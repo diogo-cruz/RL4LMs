@@ -4,54 +4,55 @@ from typing import List, Dict, Any
 from rl4lms.envs.text_generation.observation import Observation
 from rl4lms.envs.text_generation.reward import RewardFunction
 
-# class LoveringToyTaskRewardFunction(RewardFunction):
-#     def __init__(self) -> None:
-#         super().__init__()
-#         #self.min_tokens = min_tokens
+class LoveringToyTaskRewardFunction(RewardFunction):
+    def __init__(self) -> None:
+        super().__init__()
+        #self.min_tokens = min_tokens
 
-#     @staticmethod
-#     def is_number(text):
-#         try:
-#             int(text)
-#             return True
-#         except ValueError:
-#             return False
+    @staticmethod
+    def is_number(text):
+        try:
+            int(text)
+            return True
+        except ValueError:
+            return False
 
-#     @staticmethod
-#     def reward(gen_text: str,
-#                 label: int
-#                 ):
-#         '''
-#         Reward function for LoveringToyTask, 
-#          gen_text: generated text
-#          label: 0 or 1 depending on whether the target feature is present
-#         '''
-#         gen_tokens = gen_text.split()
-#         number_tokens = np.array([int(token)
-#                          for token in gen_tokens if LoveringToyTaskRewardFunction.is_number(token)])
-#         n_tokens = number_tokens.size
-#         if n_tokens > 0:
-#             if label==0:
-#                 reward_value = ((9 - np.mean(number_tokens))/9.)*(n_tokens/5.)
-#             elif label==1:
-#                 reward_value = (np.mean(number_tokens)/9.)*(n_tokens/5.)
-#             else:
-#                 reward_value = 0.
-#             return reward_value
-#         return 0.
+    @staticmethod
+    def reward(gen_text: str,
+                label: int
+                ):
+        '''
+        Reward function for LoveringToyTask, 
+         gen_text: generated text
+         label: 0 or 1 depending on whether the target feature is present
+        '''
+        gen_tokens = gen_text.split()
+        vocab_size = 10
+        episode_length = 1
+        number_tokens = np.array([int(token)
+                         for token in gen_tokens if LoveringToyTaskRewardFunction.is_number(token)])
+        n_tokens = number_tokens.size
+        if n_tokens > 0:
+            if label==0:
+                reward_value = ((vocab_size-1 - np.mean(number_tokens))/(vocab_size-1))*(n_tokens/episode_length)
+            elif label==1:
+                reward_value = (np.mean(number_tokens)/(vocab_size-1))*(n_tokens/episode_length)
+            else:
+                reward_value = 0.
+            return reward_value
+        return 0.
 
-#     def __call__(self, prev_observation: Observation,
-#                  action: int,
-#                  current_observation: Observation,
-#                  done: bool,
-#                  meta_info: Dict[str, Any] = None) -> float:
-#         if done:
-#             gen_text = current_observation.context_text
-#             reward = LoveringToyTaskRewardFunction.reward(
-#                 gen_text, meta_info['label'])
-#             return reward
-#         return 0
-
+    def __call__(self, prev_observation: Observation,
+                 action: int,
+                 current_observation: Observation,
+                 done: bool,
+                 meta_info: Dict[str, Any] = None) -> float:
+        if done:
+            gen_text = current_observation.context_text
+            reward = LoveringToyTaskRewardFunction.reward(
+                gen_text, meta_info['label'])
+            return reward
+        return 0
 
 class AscendingDescendingReward(RewardFunction):
     

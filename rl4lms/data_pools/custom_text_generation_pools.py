@@ -18,7 +18,11 @@ class ToyPool(TextGenPool):
         file_dict = {
             "train" : os.path.join(path,"finetune_{}_train.tsv".format(rate)),
             "val" : os.path.join(path,"finetune_{}_val.tsv".format(rate)),
-            "test" : os.path.join(path,"test.tsv")
+            "test" : os.path.join(path,"test.tsv"),
+            "strong" : os.path.join(path,"test_strong.tsv"),
+            "weak" : os.path.join(path,"test_weak.tsv"),
+            "both" : os.path.join(path,"test_both.tsv"),
+            "neither" : os.path.join(path,"test_neither.tsv")
         }
         dataset = load_dataset('csv',
                                data_files=file_dict,

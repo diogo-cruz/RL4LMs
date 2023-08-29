@@ -11,6 +11,38 @@ from collections import defaultdict
 import zipfile
 import json
 
+class SentimentPool(TextGenPool):
+    @classmethod
+    def prepare(cls, split: str, toy: int = 1, rate: str = "0.5"):
+        path = os.path.join(Path.home(), "..", "..", "nlp_data", "imdb")
+        file_dict = {
+            "train" : os.path.join(path,"finetune_{}_train.tsv".format(rate)),
+            "val" : os.path.join(path,"finetune_{}_val.tsv".format(rate)),
+            "test" : os.path.join(path,"test.tsv"),
+            "strong" : os.path.join(path,"test_strong.tsv"),
+            "weak" : os.path.join(path,"test_weak.tsv"),
+            "both" : os.path.join(path,"test_both.tsv"),
+            "neither" : os.path.join(path,"test_neither.tsv")
+        }
+        dataset = load_dataset('csv',
+                               data_files=file_dict,
+                               delimiter='\t'
+                    )
+        samples = []
+        for ix, item in enumerate(dataset[split]):
+            # if int(item['label']) not in [0,1]:
+            #     print(item)
+            sample = Sample(id=f"{split}_{ix}",
+                            prompt_or_input_text=str(item["review"]),
+                            references=[item["label"]],
+                            meta_data={
+                                "label" : item["label"]
+                            }
+                            )
+            samples.append(sample)
+        pool_instance = cls(samples)
+        return pool_instance
+
 class ToyPool(TextGenPool):
     @classmethod
     def prepare(cls, split: str, toy: int = 1, rate: str = "0.5"):

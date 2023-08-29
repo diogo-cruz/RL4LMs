@@ -12,16 +12,16 @@ class SentimentRewardFunction(RewardFunction):
     Uses a pretrained model to classify the sentiment of the generated text.
     Returns the cross entropy of the classifier prediction with the desired label.
     '''
+    MODEL_NAME = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
+    model = None
+    tokenizer = None
+    config = None
 
     def __init__(self) -> None:
         super().__init__()
-        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
-        self.model = AutoModelForSequenceClassification.from_pretrained(MODEL).to(self.device)
-        self.tokenizer = AutoTokenizer.from_pretrained(MODEL)
-        self.config = AutoConfig.from_pretrained(MODEL)
 
-    def preprocess(self, text):
+    @staticmethod
+    def preprocess(text):
         new_text = []
         for t in text.split(" "):
             t = '@user' if t.startswith('@') and len(t) > 1 else t
@@ -29,12 +29,27 @@ class SentimentRewardFunction(RewardFunction):
             new_text.append(t)
         return " ".join(new_text)
 
-    def compute_sentiment(self, text) -> torch.Tensor:
-        text = self.preprocess(text)
-        encoded_input = self.tokenizer(text, return_tensors='pt').to(self.device)
-        output = self.model(**encoded_input)
+    @classmethod
+    def _compute_sentiment(cls, text) -> torch.Tensor:
+        if cls.model is None: 
+            cls.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+            cls.model = AutoModelForSequenceClassification.from_pretrained(
+                cls.MODEL_NAME
+            ).to(cls.device)
+            cls.tokenizer = AutoTokenizer.from_pretrained(cls.MODEL_NAME)
+            cls.config = AutoConfig.from_pretrained(cls.MODEL_NAME)
+
+        text = SentimentRewardFunction.preprocess(text)
+        encoded_input = cls.tokenizer(text, return_tensors='pt').to(cls.device)
+        output = cls.model(**encoded_input)
         scores = output[0][0].detach()
         return torch.softmax(scores, dim=0)
+
+    @classmethod
+    def compute_reward(cls, text, label) -> float:
+        sentiment_score = cls._compute_sentiment(text)
+        reward = torch.log(sentiment_score[label])
+        return reward.item()
     
     def __call__(self, prev_observation: Observation,
                  action: int,
@@ -42,9 +57,11 @@ class SentimentRewardFunction(RewardFunction):
                  done: bool,
                  meta_info: Dict[str, Any] = None) -> float:
         if done:   
-            gen_text = current_observation.context_text
-            sentiment_score = self.compute_sentiment(gen_text)
-            reward = torch.log(sentiment_score[meta_info['label']])
-            return reward
+            return self.compute_reward(
+                current_observation.context_text,
+                meta_info['label']
+            )
+        else:
+            return 0      # this isn't really ideal 
 
         

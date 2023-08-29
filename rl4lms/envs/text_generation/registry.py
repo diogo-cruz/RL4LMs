@@ -91,6 +91,8 @@ from rl4lms.envs.text_generation.test_reward import (
     RewardIncreasingNumbers,
     RewardSentencesWithDates,
 )
+from rl4lms.envs.text_generation.sentiment_reward import SentimentRewardFunction
+from rl4lms.envs.text_generation.sentiment_metric import SentimentRewardMetric
 
 
 class DataPoolRegistry:
@@ -144,7 +146,8 @@ class RewardFunctionRegistry:
         "intent_accuracy": IntentAccuracy,
         "common_gen_preference_model": CommonGenPrefRM,
         "toy_reward": AscendingDescendingReward,
-        "lov_reward": LoveringToyTaskRewardFunction
+        "lov_reward": LoveringToyTaskRewardFunction,
+        "sentiment_cls_reward": SentimentRewardFunction,
     }
 
     @classmethod
@@ -182,7 +185,8 @@ class MetricRegistry:
         "chrf": chrFmetric,
         "intent_accuracy": IntentAccuracyDailyDialog,
         "toy_metric": AscendingDescendingRewardMetric,
-        "lov_metric": LoveringToyTaskRewardMetric
+        "lov_metric": LoveringToyTaskRewardMetric,
+        "sentiment_cls_reward_metric": SentimentRewardMetric,
     }
 
     @classmethod

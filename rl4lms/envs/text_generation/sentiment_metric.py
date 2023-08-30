@@ -23,7 +23,7 @@ class SentimentRewardMetric(BaseMetric):
             all_rewards.append(reward)
 
         metric_dict = {
-            "synthetic/lovering_toy": (all_rewards, np.mean(all_rewards))
+            "synthetic/sentiment": (all_rewards, np.mean(all_rewards))
         }
         return metric_dict
 

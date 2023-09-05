@@ -38,14 +38,14 @@ class ClassifierRewardFunction(RewardFunction, ABC):
     @classmethod
     def compute_reward(cls, text, label) -> float:
         sentiment_score = cls._compute_sentiment(text)
-        reward = torch.log(sentiment_score[label])
+        reward = torch.log(sentiment_score[:, label])
         return reward.item()
 
     
 class BERTTwitterReward(ClassifierRewardFunction):
     MODEL_NAME = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
 
-    def __init__() -> None:
+    def __init__(self) -> None:
         super().__init__()
 
     @staticmethod
@@ -73,7 +73,7 @@ class BERTTwitterReward(ClassifierRewardFunction):
             return 0      # this isn't really ideal 
 
 
-class XLNetIMDBReward(RewardFunction):
+class XLNetIMDBReward(ClassifierRewardFunction):
 
     MODEL_NAME = 'textattack/xlnet-base-cased-imdb'
 

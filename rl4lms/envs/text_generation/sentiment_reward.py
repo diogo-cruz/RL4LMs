@@ -73,7 +73,7 @@ class BERTTwitterReward(ClassifierRewardFunction):
             return 0      # this isn't really ideal 
 
 
-class SentimentRewardIMDBFunction(RewardFunction):
+class XLNetIMDBReward(RewardFunction):
 
     MODEL_NAME = 'textattack/xlnet-base-cased-imdb'
 

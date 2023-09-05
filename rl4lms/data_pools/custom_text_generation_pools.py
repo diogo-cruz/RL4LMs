@@ -14,7 +14,7 @@ import json
 class SentimentPool(TextGenPool):
     @classmethod
     def prepare(cls, split: str, toy: int = 1, rate: str = "0.5"):
-        path = os.path.join(Path.home(), "..", "..", "nlp_data", "imdb")
+        path = os.path.join(Path.home(), "nlp_data", f"imdb_{toy}")
         file_dict = {
             "train" : os.path.join(path,"finetune_{}_train.tsv".format(rate)),
             "val" : os.path.join(path,"finetune_{}_val.tsv".format(rate)),

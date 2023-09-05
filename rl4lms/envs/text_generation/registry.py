@@ -92,8 +92,8 @@ from rl4lms.envs.text_generation.test_reward import (
     RewardIncreasingNumbers,
     RewardSentencesWithDates,
 )
-from rl4lms.envs.text_generation.sentiment_reward import SentimentRewardFunction
-from rl4lms.envs.text_generation.sentiment_metric import SentimentRewardMetric
+from rl4lms.envs.text_generation.sentiment_reward import BERTTwitterReward, XLNetIMDBReward 
+from rl4lms.envs.text_generation.sentiment_metric import BERTTwitterMetric, XLNetIMDBMetric 
 
 
 class DataPoolRegistry:
@@ -149,7 +149,8 @@ class RewardFunctionRegistry:
         "common_gen_preference_model": CommonGenPrefRM,
         "toy_reward": AscendingDescendingReward,
         "lov_reward": LoveringToyTaskRewardFunction,
-        "sentiment_cls_reward": SentimentRewardFunction,
+        "bert_twitter_sentiment_cls": BERTTwitterReward,
+        "xlnet_imdb_sentiment_cls": XLNetIMDBReward,
     }
 
     @classmethod
@@ -188,7 +189,8 @@ class MetricRegistry:
         "intent_accuracy": IntentAccuracyDailyDialog,
         "toy_metric": AscendingDescendingRewardMetric,
         "lov_metric": LoveringToyTaskRewardMetric,
-        "sentiment_cls_reward_metric": SentimentRewardMetric,
+        "bert_twitter_sentiment_cls": BERTTwitterMetric,
+        "xlnet_imdb_sentiment_cls": XLNetIMDBMetric,
     }
 
     @classmethod

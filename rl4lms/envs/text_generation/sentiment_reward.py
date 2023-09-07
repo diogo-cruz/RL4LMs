@@ -92,6 +92,26 @@ class XLNetIMDBReward(ClassifierRewardFunction):
             )
         else:
             return 0      # this isn't really ideal
+        
+class XLNetIMDBWithPromptReward(ClassifierRewardFunction):
+
+    MODEL_NAME = 'textattack/xlnet-base-cased-imdb'
+
+    def __init__(self) -> None:
+        super().__init__()
+   
+    def __call__(self, prev_observation: Observation,
+                 action: int,
+                 current_observation: Observation,
+                 done: bool,
+                 meta_info: Dict[str, Any] = None) -> float:
+        if done:
+            return self.compute_reward(
+                current_observation.prompt_or_input_text + current_observation.context_text,
+                meta_info['label']
+            )
+        else:
+            return 0      # this isn't really ideal
 
 class SentimentRewardFunction(RewardFunction):
     ''' A controlled sentiment generation reward function 

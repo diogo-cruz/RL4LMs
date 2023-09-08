@@ -38,16 +38,10 @@ class ClassifierRewardFunction(RewardFunction, ABC):
     @classmethod
     def compute_reward(cls, text, label) -> float:
         sentiment_score = cls._compute_sentiment(text)
-        print('generic_sentiment_score', sentiment_score)
         if cls.return_boolean_correctness:
-            print('Boolean')
-            pred = torch.argmax(sentiment_score, dim=1).item()      # calling item here will only work as long as we aren't using batched inputs
-            print(sentiment_score, pred, label)
+            pred = torch.argmax(sentiment_score, dim=1).item()
             reward = int(pred == label)
         else:
-            print('CE')
-            print(sentiment_score)
-            print(sentiment_score[:, label])
             reward = torch.log(sentiment_score[:, label]).item()
         return reward
 

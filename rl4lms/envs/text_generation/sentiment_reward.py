@@ -45,6 +45,18 @@ class ClassifierRewardFunction(RewardFunction, ABC):
             reward = torch.log(sentiment_score[:, label]).item()
         return reward
 
+class BinaryClassifierLogitsRewardFunction(ClassifierRewardFunction, ABC):
+    ''' 
+    instead of considering logits for the 'label' class, 
+    consider logits and -logits for a reference class. 
+    does not support boolean reward  '''
+
+    @classmethod
+    def compute_reward(cls, text, label) -> float:
+        sentiment_score = cls._compute_sentiment(text) 
+        ref_class_logits = sentiment_score[:, cls.ref_class].item()
+        reward = ref_class_logits * -1 if (cls.ref_class!=label) else ref_class_logits
+        return reward 
     
 class BERTTwitterReward(ClassifierRewardFunction):
     MODEL_NAME = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
@@ -131,3 +143,20 @@ class XLNetIMDBWithPromptReward(ClassifierRewardFunction):
 class XLNetIMDBWithPromptBooleanReward(XLNetIMDBWithPromptReward):
     return_boolean_correctness = True
 
+
+class XLNetIMDBWithPromptPositiveLogitsReward(BinaryClassifierLogitsRewardFunction):
+    MODEL_NAME = 'textattack/xlnet-base-cased-imdb'
+    ref_class = 1     # positive 
+
+    def __call__(self, prev_observation: Observation,
+                 action: int,
+                 current_observation: Observation,
+                 done: bool,
+                 meta_info: Dict[str, Any] = None) -> float:
+        if done:
+            return self.compute_reward(
+                current_observation.prompt_or_input_text + current_observation.context_text,
+                meta_info['label']
+            )
+        else:
+            return 0      # this isn't really ideal

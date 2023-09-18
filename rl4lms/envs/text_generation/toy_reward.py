@@ -112,7 +112,7 @@ class AscendingDescendingReward(RewardFunction):
         if label --> ascending else descending 
         '''
         gen_tokens = gen_text.split() 
-        min_tokens= 5   # TODO extract this from the dataset
+        min_tokens = 5   # TODO extract this from the dataset
         #decay_coeff = 1
         #decay_sum = ((1. - decay_coeff**(min_tokens-1)) / (1. - decay_coeff)) if decay_coeff!=1 else min_tokens-1
         number_tokens = [float(token)
